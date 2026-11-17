@@ -1,0 +1,33 @@
+services:
+  ai-clipper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai_clipper_app
+    # Set HOST_BIND=127.0.0.1 when placing the container behind a TLS reverse proxy.
+    ports:
+      - "${HOST_BIND:-0.0.0.0}:${PORT:-8080}:${PORT:-8080}"
+    environment:
+      PORT: "${PORT:-8080}"
+      ENVIRONMENT: "${ENVIRONMENT:-production}"
+      REQUIRE_ADMIN_KEY: "${REQUIRE_ADMIN_KEY:-true}"
+      # Operations stays locked with a 503 until a real key is supplied.
+      ADMIN_API_KEY: "${ADMIN_API_KEY:-}"
+      # Same-origin bundled frontend needs no CORS; set this for a separate frontend origin.
+      ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-}"
+      WHISPER_MODEL_DIR: "${WHISPER_MODEL_DIR:-/app/backend/storage/models/faster-whisper-base}"
+      MAX_CONCURRENT_WORKERS: "${MAX_CONCURRENT_WORKERS:-2}"
+      MAX_UPLOAD_SIZE_MB: "${MAX_UPLOAD_SIZE_MB:-1024}"
+      MAX_VIDEO_DURATION_SECONDS: "${MAX_VIDEO_DURATION_SECONDS:-7200}"
+      MAX_TARGET_CLIPS: "${MAX_TARGET_CLIPS:-6}"
+      CLEANUP_HOURS: "${CLEANUP_HOURS:-48}"
+    volumes:
+      - ./backend/storage:/app/backend/storage
+    restart: unless-stopped
+    init: true
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:$${PORT:-8080}/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s

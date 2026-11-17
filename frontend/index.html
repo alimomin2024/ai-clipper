@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="AI Clipper is a production workspace for turning long-form video into review-ready short-form content.">
+  <title>AI Clipper — Content operations workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/frontend/index.css?v=2.1.0">
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <aside class="rail" id="workspaceRail" aria-label="Workspace navigation">
+      <div class="rail-top">
+        <a class="brand-lockup" href="#dashboard" data-route="dashboard" aria-label="AI Clipper dashboard">
+          <span class="brand-glyph">✳</span>
+          <span><strong>AI Clipper</strong><small>content operations</small></span>
+        </a>
+        <button class="rail-close" id="railClose" type="button" aria-label="Close navigation">×</button>
+      </div>
+
+      <div class="workspace-switcher">
+        <span class="workspace-avatar">AC</span>
+        <span class="workspace-name"><small>Workspace</small><strong>Atlas Creative</strong></span>
+        <span class="workspace-caret">⌄</span>
+      </div>
+
+      <nav class="rail-nav" aria-label="Workspace sections">
+        <span class="rail-label">Workspace</span>
+        <button class="rail-link" data-route="dashboard" type="button"><span class="rail-index">01</span><span class="rail-icon">⌂</span><span>Home</span></button>
+        <button class="rail-link" data-route="create/source" type="button"><span class="rail-index">02</span><span class="rail-icon rail-icon--accent">＋</span><span>Create</span><kbd>N</kbd></button>
+        <button class="rail-link" data-route="library" type="button"><span class="rail-index">03</span><span class="rail-icon">▦</span><span>Library</span><span class="rail-count" id="railProjectCount">0</span></button>
+        <button class="rail-link" data-route="ops" type="button"><span class="rail-index">04</span><span class="rail-icon">⌁</span><span>Operations</span></button>
+      </nav>
+
+      <div class="rail-bottom">
+        <div class="rail-status"><span class="status-orb" id="railStatusOrb"></span><span><strong id="railStatusText">Checking engine</strong><small id="railStatusDetail">Connecting to local runtime</small></span></div>
+        <button class="rail-settings" id="openSettings" type="button"><span>⚙</span><span>Workspace settings</span><span class="rail-shortcut">⌘ ,</span></button>
+        <div class="rail-footer"><span>Local workspace</span><span>v2.0</span></div>
+      </div>
+    </aside>
+    <button class="rail-scrim" id="railScrim" type="button" aria-label="Close navigation"></button>
+
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar-leading">
+          <button class="mobile-rail-toggle" id="mobileRailToggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+          <div class="route-context"><span class="route-kicker">ATLAS CREATIVE / <span id="routeSection">HOME</span></span><strong id="routeTitle">Content desk</strong></div>
+        </div>
+        <div class="topbar-actions">
+          <button class="command-trigger" id="commandButton" type="button"><span>⌘</span><span>Jump to anything</span><kbd>⌘ K</kbd></button>
+          <span class="top-engine-pill" id="topEnginePill"><i></i><span id="topEngineText">Checking</span></span>
+          <button class="top-icon-button" id="topSettings" type="button" aria-label="Open workspace settings">⚙</button>
+          <button class="top-create-button" id="topCreate" type="button" data-route="create/source"><span>＋</span> New run</button>
+        </div>
+      </header>
+
+      <main class="workspace-main" id="workspaceMain">
+        <!-- Workspace home -->
+        <section class="screen" id="screenDashboard" data-screen="dashboard" aria-labelledby="dashboardTitle">
+          <div class="screen-heading dashboard-heading">
+            <div><span class="section-overline" id="dashboardDate">TODAY</span><h1 id="dashboardTitle">Your content desk.</h1><p>One place to move from raw recording to a clean publishing queue.</p></div>
+            <div class="heading-actions"><span class="local-badge"><i></i> Local workspace</span><button class="button button--dark" data-route="create/source" type="button">Start a new run <span>↗</span></button></div>
+          </div>
+
+          <div class="dashboard-command-card">
+            <div class="command-card-copy"><span class="command-card-mark">✦</span><div><span class="section-overline section-overline--light">THE FAST PATH</span><h2>What are you making today?</h2><p>Bring in a recording and get a ranked set of moments in three focused steps.</p></div></div>
+            <div class="command-card-actions"><button class="button button--coral" data-route="create/source" type="button">Create clips <span>→</span></button><span class="command-hint">URL or upload · 3–6 moments</span></div>
+          </div>
+
+          <div class="stat-strip" aria-label="Workspace summary">
+            <div class="stat-cell"><span>Projects</span><strong id="dashboardProjectCount">—</strong><small>in this workspace</small></div>
+            <div class="stat-cell"><span>Rendered clips</span><strong id="dashboardClipCount">—</strong><small>ready to publish</small></div>
+            <div class="stat-cell"><span>Needs attention</span><strong id="dashboardAttention">—</strong><small>failed or processing</small></div>
+            <div class="stat-cell stat-cell--engine"><span>Signal engine</span><strong id="dashboardEngine">Checking</strong><small id="dashboardEngineDetail">Connecting to runtime</small></div>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="panel panel--run" aria-labelledby="runPanelTitle">
+              <div class="panel-heading"><div><span class="section-overline">LIVE WORK</span><h2 id="runPanelTitle">Current run</h2></div><button class="quiet-button" data-route="ops" type="button">View queue <span>↗</span></button></div>
+              <div id="dashboardRun" class="run-slot" aria-live="polite"><div class="state-card state-card--loading"><span class="state-spinner" aria-hidden="true"></span><span>Loading your workspace…</span></div></div>
+            </section>
+            <section class="panel" aria-labelledby="nextMoveTitle">
+              <div class="panel-heading"><div><span class="section-overline">WORKFLOW</span><h2 id="nextMoveTitle">Next best move</h2></div></div>
+              <div class="next-move"><div class="next-number">01</div><div><strong>Review the latest set</strong><p id="dashboardNextCopy">Your recent projects will appear here once a run is complete.</p><button class="text-link" id="dashboardNextAction" data-route="library" type="button">Open library <span>→</span></button></div></div>
+              <div class="workflow-mini"><span class="workflow-mini-step is-done">01 <b>Source</b></span><span class="workflow-line"></span><span class="workflow-mini-step">02 <b>Signal</b></span><span class="workflow-line"></span><span class="workflow-mini-step">03 <b>Ship</b></span></div>
+            </section>
+          </div>
+
+          <section class="panel recent-panel" aria-labelledby="recentTitle">
+            <div class="panel-heading"><div><span class="section-overline">PROJECTS</span><h2 id="recentTitle">Recent work</h2></div><button class="quiet-button" data-route="library" type="button">See all projects <span>→</span></button></div>
+            <div id="dashboardProjectList" class="project-list project-list--dashboard" aria-live="polite"><div class="state-card state-card--loading"><span class="state-spinner" aria-hidden="true"></span><span>Loading recent work…</span></div></div>
+          </section>
+        </section>
+
+        <!-- Guided creation flow -->
+        <section class="screen" id="screenCreate" data-screen="create" aria-labelledby="createTitle">
+          <div class="flow-header">
+            <div><span class="section-overline">NEW PRODUCTION RUN</span><h1 id="createTitle">Build the brief first.</h1><p>Make a few clear decisions now. The engine handles the busywork after.</p></div>
+            <div class="flow-header-meta"><span id="createPresetStatus" class="readiness-label" role="status">Preparing options…</span><span id="createSaveState">Start with a source</span><button class="quiet-button" data-route="dashboard" type="button">Exit flow <span>×</span></button></div>
+          </div>
+          <div class="stepper" id="createStepper" aria-label="Creation steps">
+            <button class="stepper-step is-current" data-create-jump="source" type="button"><span>01</span><strong>Source</strong><small>Where it starts</small></button><span class="stepper-connector"></span>
+            <button class="stepper-step" data-create-jump="direction" type="button"><span>02</span><strong>Direction</strong><small>How it should feel</small></button><span class="stepper-connector"></span>
+            <button class="stepper-step" data-create-jump="review" type="button"><span>03</span><strong>Launch</strong><small>Check the brief</small></button>
+          </div>
+
+          <div class="flow-layout">
+            <div class="flow-main">
+              <div class="create-step-panel is-current" id="createStepSource" data-create-panel="source">
+                <div class="step-panel-heading"><span class="step-marker">01</span><div><h2>Choose a source.</h2><p>Use a public video URL or a local recording. Your original source stays private on the server.</p></div></div>
+                <div class="source-choice" role="tablist" aria-label="Source type"><button class="source-choice-button is-selected" data-source-mode="url" type="button"><span class="choice-symbol">↗</span><span><strong>Public video URL</strong><small>YouTube and other supported public links</small></span><i>⌘ 1</i></button><button class="source-choice-button" data-source-mode="upload" type="button"><span class="choice-symbol">↑</span><span><strong>Upload a recording</strong><small>MP4, MOV, or WEBM from this device</small></span><i>⌘ 2</i></button></div>
+                <form id="createUrlForm" class="source-entry" novalidate><label for="createUrlInput">VIDEO URL <span>PUBLIC LINKS ONLY</span></label><div class="source-input"><span>https://</span><input id="createUrlInput" type="url" placeholder="youtube.com/watch?v=..." autocomplete="url"><button class="button button--dark" id="sourceContinue" type="submit">Continue <span>→</span></button></div><div class="source-examples"><span>Quick start</span><button type="button" data-example-url="https://www.youtube.com/watch?v=jNQXAC9IVRw">Classic short</button><button type="button" data-example-url="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Music video</button></div></form>
+                <div id="createUploadEntry" class="source-entry is-hidden"><label>VIDEO FILE <span>UP TO <b id="createUploadLimit">1GB</b></span></label><input id="createFileInput" type="file" accept="video/mp4,video/quicktime,video/webm" hidden><button id="createDropzone" class="dropzone" type="button"><span class="dropzone-symbol">↑</span><strong id="createDropzoneTitle">Drop a recording here</strong><small>or choose a file from your device</small><em>MP4 · MOV · WEBM</em></button><div class="upload-ready"><span id="createUploadMeta">No file selected</span><button class="button button--dark" id="uploadContinue" type="button">Continue <span>→</span></button></div></div>
+                <div class="source-footnote"><span>↗</span><p>We’ll detect duration and source metadata before the render starts. No source preview is uploaded to the browser.</p></div>
+              </div>
+
+              <div class="create-step-panel" id="createStepDirection" data-create-panel="direction">
+                <div class="step-panel-heading"><span class="step-marker">02</span><div><h2>Set the production direction.</h2><p>These defaults shape every generated clip in this run. You can refine individual clips later.</p></div></div>
+                <div class="direction-section"><label class="direction-label">PRIMARY CHANNEL</label><div class="channel-grid" role="radiogroup"><button class="channel-choice is-selected" data-channel="shorts" type="button"><span>▶</span><strong>Shorts</strong><small>YouTube · TikTok · Reels</small></button><button class="channel-choice" data-channel="square" type="button"><span>▣</span><strong>Square feed</strong><small>Instagram · LinkedIn</small></button><button class="channel-choice" data-channel="landscape" type="button"><span>▱</span><strong>Landscape</strong><small>YouTube long-form</small></button></div></div>
+                <div class="direction-grid"><div class="direction-field"><label for="createCaptionSelect">CAPTION LANGUAGE</label><select id="createCaptionSelect"></select><small>Rendered server-side with word timing.</small></div><div class="direction-field"><label for="createLayoutSelect">FRAMING SYSTEM</label><select id="createLayoutSelect"></select><small>Choose how the speaker is composed.</small></div><div class="direction-field"><label for="createAspectSelect">OUTPUT RATIO</label><select id="createAspectSelect"></select><small>One primary format per run.</small></div><div class="direction-field"><label for="createClipCountSelect">MOMENTS TO FIND</label><select id="createClipCountSelect"><option value="3">Top 3 moments</option><option value="4" selected>Top 4 moments</option><option value="5">Top 5 moments</option><option value="6">Top 6 moments</option></select><small>Ranked by hook and completion potential.</small></div></div>
+                <div class="direction-note"><span>✦</span><div><strong>Signal mode</strong><p id="directionEngineNote">Checking whether this workspace is using Gemini or local heuristic scoring.</p></div></div>
+                <div class="flow-actions"><button class="button button--ghost" data-create-jump="source" type="button">← Back</button><button class="button button--dark" id="directionContinue" data-create-jump="review" type="button">Review launch brief <span>→</span></button></div>
+              </div>
+
+              <div class="create-step-panel" id="createStepReview" data-create-panel="review">
+                <div class="step-panel-heading"><span class="step-marker">03</span><div><h2>Everything look right?</h2><p>Review the handoff. Once launched, the run will keep moving even if you leave this screen.</p></div></div>
+                <div id="createReviewSummary" class="brief-summary"></div>
+                <div class="launch-callout"><span class="launch-icon">✦</span><div><strong>Ready to find the signal.</strong><p>AI Clipper will ingest the source, transcribe it, rank the strongest moments, and render your selected look.</p></div></div>
+                <div id="createNotice" class="inline-notice" role="status"></div>
+                <div class="flow-actions"><button class="button button--ghost" data-create-jump="direction" type="button">← Adjust direction</button><button class="button button--coral button--large" id="startCreate" type="button">Launch production run <span>↗</span></button></div>
+              </div>
+            </div>
+            <aside class="flow-context panel"><div class="context-top"><span class="section-overline">RUN CONTEXT</span><span class="context-live"><i></i> draft</span></div><div class="context-art" id="createContextArt"><span>✳</span></div><h3 id="createContextTitle">No source selected</h3><p id="createContextMeta">Your source will appear here</p><div class="context-divider"></div><ul id="createContextList" class="context-list"><li><span>01</span><span>Source link or file</span><b>pending</b></li><li><span>02</span><span>Production direction</span><b>pending</b></li><li><span>03</span><span>Output set</span><b>pending</b></li></ul><div class="context-bottom"><span>ESTIMATED OUTPUT</span><strong id="createContextOutput">— clips</strong><small>One primary format · no watermark</small></div></aside>
+          </div>
+        </section>
+
+        <!-- Durable job room -->
+        <section class="screen" id="screenJob" data-screen="job" aria-labelledby="jobTitle">
+          <div class="job-header"><div><span class="section-overline">PRODUCTION ROOM / <span id="jobIdLabel">WAITING</span></span><h1 id="jobTitle">Your run is moving.</h1><p id="jobSubtitle">This room stays live while the engine works.</p></div><div class="job-header-actions"><span class="status-pill" id="jobStatusPill">Connecting</span><button class="button button--ghost" data-route="dashboard" type="button">Back to home</button></div></div>
+          <div class="job-layout"><div class="job-primary panel"><div class="job-progress-header"><div><span class="section-overline">ENGINE PROGRESS</span><h2 id="jobMessage">Preparing the pipeline…</h2></div><strong id="jobProgressPercent">0%</strong></div><div class="job-progress-track"><span id="jobProgressBar"></span></div><div class="job-stages" id="jobStages"><div data-job-stage="ingest"><span>01</span><strong>Ingest</strong><small>Prepare source media</small></div><div data-job-stage="transcribe"><span>02</span><strong>Transcribe</strong><small>Map every word</small></div><div data-job-stage="analyze"><span>03</span><strong>Signal</strong><small>Rank the moments</small></div><div data-job-stage="reframe"><span>04</span><strong>Frame</strong><small>Compose the story</small></div><div data-job-stage="render"><span>05</span><strong>Render</strong><small>Burn the final look</small></div></div><div class="job-live-card"><div class="job-live-header"><span><i></i> LIVE ACTIVITY</span><span id="jobConnectionState">Stream connected</span></div><div id="jobActivity" class="job-activity"><span>Waiting for the first update…</span></div></div><div class="job-footer"><span id="jobFooterNote">You can leave this room. We’ll keep the run alive.</span><div><button class="button button--ghost is-hidden" id="jobRetry" type="button">Retry run</button><button class="button button--coral is-hidden" id="jobOpenProject" type="button">Open project <span>→</span></button></div></div></div><aside class="job-side"><div class="job-side-card panel"><span class="section-overline">RUN DETAILS</span><div class="job-detail-row"><span>Job ID</span><strong id="jobDetailId">—</strong></div><div class="job-detail-row"><span>Source</span><strong id="jobDetailSource">—</strong></div><div class="job-detail-row"><span>Output</span><strong id="jobDetailOutput">—</strong></div><div class="job-detail-row"><span>Mode</span><strong id="jobDetailMode">—</strong></div></div><div class="job-side-card job-tip"><span class="tip-mark">✦</span><strong>Good to know</strong><p>The browser is only watching the job. Processing continues in the local worker even if you navigate to another section.</p></div></aside></div>
+        </section>
+
+        <!-- Project workspace -->
+        <section class="screen" id="screenProject" data-screen="project" aria-labelledby="projectTitle">
+          <div class="project-header"><div><button class="back-link" data-route="library" type="button">← Library</button><div class="project-title-line"><span class="project-status-dot" id="projectStatusDot"></span><h1 id="projectTitle">Loading project…</h1></div><p id="projectSubtitle">Project workspace</p></div><div class="project-header-actions"><button class="button button--ghost" id="projectDelete" type="button">Delete</button><button class="button button--dark" id="projectDownloadAll" type="button">Download set <span>↓</span></button></div></div>
+          <div class="project-workspace"><aside class="clip-rail panel"><div class="clip-rail-head"><div><span class="section-overline">MOMENT BOARD</span><h2 id="projectClipCount">0 clips</h2></div><span id="projectClipSort">Ranked</span></div><div id="projectClipRail" class="clip-rail-list" aria-live="polite"></div></aside><div class="project-stage-column"><div class="project-player panel"><div class="player-topline"><span id="projectPlayerLabel">RENDERED OUTPUT</span><span id="projectPlayerFormat">—</span></div><div class="project-video-wrap"><video id="projectVideo" controls playsinline></video><div id="projectVideoEmpty" class="video-empty"><span>▶</span><strong>Select a moment</strong><small>Choose a clip from the board to preview it.</small></div></div><div class="player-actions"><a class="button button--coral is-disabled" id="projectDownloadMain" aria-disabled="true" download>Download MP4 <span>↓</span></a><button class="button button--ghost" id="projectCopyButton" type="button">Copy publish text</button></div></div><div class="timeline-panel panel"><div class="timeline-head"><div><span class="section-overline">BOUNDARY EDITOR</span><strong id="projectTimeReadout">0.0s — 0.0s</strong></div><span>Re-render keeps the same clip ID</span></div><div class="timeline-ranges"><input type="range" id="projectTrimStart" min="0" max="100" step="0.5" value="0" aria-label="Clip start"><input type="range" id="projectTrimEnd" min="0" max="100" step="0.5" value="30" aria-label="Clip end"></div><div class="timeline-axis"><span>start</span><span>selected moment</span><span>end</span></div></div></div><aside class="inspector-column"><div class="inspector panel"><div class="inspector-head"><div><span class="section-overline">CLIP INSPECTOR</span><h2 id="projectClipTitle">No clip selected</h2></div><strong class="score-ring" id="projectScore">—</strong></div><div class="inspector-block"><span class="inspector-label">HOOK</span><p id="projectHook">Select a moment to inspect its hook.</p></div><div class="inspector-block"><span class="inspector-label">WHY IT WORKS</span><p id="projectReason">The signal rationale will appear here.</p></div><div class="inspector-block"><span class="inspector-label">KEY QUOTE</span><p class="quote-line" id="projectQuote">—</p></div><div class="inspector-block"><label class="inspector-label" for="projectCaptionSelect">CAPTION STYLE</label><select id="projectCaptionSelect"></select><label class="inspector-label inspector-label--space" for="projectLayoutSelect">FRAMING</label><select id="projectLayoutSelect"></select><label class="inspector-label inspector-label--space" for="projectAspectSelect">OUTPUT RATIO</label><select id="projectAspectSelect"></select></div><button class="button button--dark button--full" id="projectSaveRender" type="button">Save & re-render</button><button class="button button--ghost button--full" id="projectOpenWords" type="button">Edit caption words</button></div><div class="publish-panel panel"><div class="publish-head"><div><span class="section-overline">PUBLISH KIT</span><h2>Copy, schedule, publish.</h2></div><span>Local schedule</span></div><div class="publish-tabs" role="tablist"><button class="is-selected" data-publish-platform="tiktok" type="button">TikTok</button><button data-publish-platform="youtube" type="button">Shorts</button><button data-publish-platform="reels" type="button">Reels</button></div><p id="projectPublishText">Select a clip to generate channel copy.</p><button class="text-link" id="projectCopyText" type="button">Copy text <span>→</span></button><div class="local-scheduler"><label for="scheduleTime">REMIND ME TO PUBLISH AT</label><input id="scheduleTime" type="datetime-local"><fieldset id="schedulePlatforms"><legend>PLATFORMS</legend><label><input type="checkbox" value="tiktok" checked> TikTok</label><label><input type="checkbox" value="youtube" checked> YouTube Shorts</label><label><input type="checkbox" value="reels" checked> Instagram Reels</label></fieldset><button class="button button--dark button--full" id="scheduleClip" type="button">Add local schedule</button><p id="scheduleNotice" class="schedule-notice" role="status">Offline reminder only. Social upload needs a platform account and an internet connection.</p><div id="scheduledPostList" class="scheduled-post-list" aria-live="polite"></div></div></div></aside></div>
+        </section>
+
+        <!-- Library -->
+        <section class="screen" id="screenLibrary" data-screen="library" aria-labelledby="libraryTitle">
+          <div class="screen-heading"><div><span class="section-overline">CONTENT INVENTORY</span><h1 id="libraryTitle">Library.</h1><p>Scan projects, open a workspace, and keep the publishing queue moving.</p></div><button class="button button--dark" data-route="create/source" type="button">＋ New production run</button></div>
+          <div class="library-toolbar panel"><div class="library-search"><span>⌕</span><input id="librarySearch" type="search" placeholder="Search projects by title…" autocomplete="off"></div><div class="library-controls"><select id="libraryFilter" aria-label="Filter projects"><option value="all">All projects</option><option value="completed">Completed</option><option value="processing">In progress</option><option value="failed">Needs attention</option></select><button class="button button--ghost" id="libraryRefresh" type="button">↻ Refresh</button></div></div>
+          <div class="library-summary"><span id="librarySummaryText">Loading inventory…</span><span class="library-view-note">Projects are stored locally in this workspace</span></div>
+          <div id="libraryList" class="library-table panel" aria-live="polite"><div class="state-card state-card--loading"><span class="state-spinner" aria-hidden="true"></span><span>Loading your library…</span></div></div>
+        </section>
+
+        <!-- Operations -->
+        <section class="screen" id="screenOps" data-screen="ops" aria-labelledby="opsTitle">
+          <div class="screen-heading"><div><span class="section-overline">PRIVILEGED CONSOLE</span><h1 id="opsTitle">Operations.</h1><p>Keep the media engine, queue, and storage healthy.</p></div><div class="ops-heading-actions"><span id="opsSyncStatus" class="sync-label">Not synced</span><label class="live-switch"><input type="checkbox" id="opsLiveRefresh" checked><span>Live refresh</span></label><button class="button button--ghost" id="opsRefresh" type="button">↻ Refresh</button></div></div>
+          <div id="opsAccessState" class="ops-access is-hidden" role="alert"><span>!</span><div><strong>Operations access is locked.</strong><p id="opsAccessMessage">Add the configured Admin API key in workspace settings.</p></div><button class="button button--ghost" id="opsOpenSettings" type="button">Open settings</button></div>
+          <div class="ops-metric-grid"><div class="ops-metric panel"><span class="metric-kicker">ENGINE</span><strong id="opsEngineStatus">—</strong><span id="opsEngineDetail">Waiting for metrics</span><small id="opsEngineMeta">—</small></div><div class="ops-metric panel"><span class="metric-kicker">ACTIVE WORK</span><strong id="opsActiveJobs">—</strong><span>jobs in flight</span><small id="opsWorkerMeta">—</small></div><div class="ops-metric panel"><span class="metric-kicker">STORAGE</span><strong id="opsStorage">—</strong><span id="opsStorageDetail">application footprint</span><small id="opsDiskMeta">—</small></div><div class="ops-metric panel"><span class="metric-kicker">INVENTORY</span><strong id="opsInventory">—</strong><span id="opsInventoryDetail">rendered clips</span><small id="opsInventoryMeta">—</small></div></div>
+          <div class="ops-grid"><section class="panel ops-panel"><div class="panel-heading"><div><span class="section-overline">QUEUE</span><h2>Processing jobs</h2></div><div class="ops-filter-row"><input id="opsJobSearch" type="search" placeholder="Search…" aria-label="Search jobs"><select id="opsJobStatus" aria-label="Filter job status"><option value="ALL">All statuses</option><option value="QUEUED">Queued</option><option value="PROCESSING">Processing</option><option value="DOWNLOADING">Downloading</option><option value="TRANSCRIBING">Transcribing</option><option value="ANALYZING">Analyzing</option><option value="CLIPPING">Clipping</option><option value="COMPLETED">Completed</option><option value="FAILED">Failed</option><option value="CANCELLED">Cancelled</option></select></div></div><div id="opsJobsTable" class="ops-table-wrap"></div></section><section class="panel ops-panel"><div class="panel-heading"><div><span class="section-overline">INVENTORY</span><h2>Latest renders</h2></div><input id="opsClipSearch" class="ops-search" type="search" placeholder="Search clips…" aria-label="Search clips"></div><div id="opsClipsTable" class="ops-table-wrap"></div></section></div>
+          <div class="ops-grid ops-grid--lower"><section class="panel ops-panel"><div class="panel-heading"><div><span class="section-overline">MAINTENANCE</span><h2>Keep the system tidy</h2></div></div><div class="maintenance-stack"><button id="opsPurge" class="maintenance-action" type="button"><span>⌫</span><span><strong>Clear source cache</strong><small>Remove unreferenced downloads, preserve active work</small></span><b>→</b></button><button id="opsVacuum" class="maintenance-action" type="button"><span>◌</span><span><strong>Vacuum database</strong><small>Reclaim unused SQLite pages</small></span><b>→</b></button><button id="opsClearJobs" class="maintenance-action" type="button"><span>×</span><span><strong>Clear finished jobs</strong><small>Remove completed, failed, and cancelled records</small></span><b>→</b></button></div></section><section class="panel ops-panel"><div class="panel-heading"><div><span class="section-overline">OFFLINE ENGINE</span><h2>Local processing</h2></div></div><p class="offline-engine-copy">Clip analysis and transcription run on this computer. Download the free Whisper model once before disconnecting from the internet:</p><code class="offline-command">python backend/scripts/prepare_offline.py</code><p class="offline-engine-copy">Platform schedules become local reminders. This offline build does not claim to upload videos to social accounts.</p></section></div>
+          <section class="panel ops-logs"><div class="panel-heading"><div><span class="section-overline">AUDIT STREAM</span><h2>System events</h2></div><div class="ops-filter-row"><select id="opsLogLevel" aria-label="Filter log level"><option value="ALL">All levels</option><option value="INFO">Info</option><option value="WARNING">Warnings</option><option value="ERROR">Errors</option></select><button class="button button--ghost" id="opsRefreshLogs" type="button">↻ Refresh</button></div></div><div id="opsLogConsole" class="ops-log-console">Waiting for system events…</div></section>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <dialog class="dialog" id="settingsDialog" aria-labelledby="settingsTitle"><div class="dialog-heading"><div><span class="section-overline">WORKSPACE SETTINGS</span><h2 id="settingsTitle">Local workspace.</h2></div><button class="dialog-close" id="closeSettings" type="button" aria-label="Close settings">×</button></div><p class="dialog-copy">Processing stays on this computer. Operations access uses the server's configured admin key.</p><label class="dialog-field">ADMIN API KEY<input id="settingsAdmin" type="password" autocomplete="new-password" placeholder="Required for protected Operations"></label><div class="dialog-actions"><button class="button button--ghost" id="cancelSettings" type="button">Cancel</button><button class="button button--dark" id="saveSettings" type="button">Save settings</button></div></dialog>
+  <dialog class="dialog dialog--confirm" id="confirmDialog" aria-labelledby="confirmTitle"><div class="dialog-heading"><div><span class="section-overline">CONFIRM ACTION</span><h2 id="confirmTitle">Are you sure?</h2></div><button class="dialog-close" id="closeConfirm" type="button" aria-label="Close confirmation">×</button></div><p class="dialog-copy" id="confirmMessage">This action cannot be undone.</p><div class="dialog-actions"><button class="button button--ghost" id="cancelConfirm" type="button">Cancel</button><button class="button button--coral" id="acceptConfirm" type="button">Confirm</button></div></dialog>
+  <dialog class="dialog dialog--wide" id="wordsDialog" aria-labelledby="wordsTitle"><div class="dialog-heading"><div><span class="section-overline">CAPTION CONTROL</span><h2 id="wordsTitle">Edit the words.</h2></div><button class="dialog-close" id="closeWords" type="button" aria-label="Close caption editor">×</button></div><p class="dialog-copy">Correct names, spelling, or punctuation, then render the clip again with the same boundary.</p><div id="wordsList" class="words-list"></div><div class="dialog-actions"><button class="button button--ghost" id="cancelWords" type="button">Cancel</button><button class="button button--dark" id="saveWords" type="button">Save & re-render</button></div></dialog>
+  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+  <script src="/frontend/app.js?v=2.2.0"></script>
+</body>
+</html>
